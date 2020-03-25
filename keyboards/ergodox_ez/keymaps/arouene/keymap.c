@@ -1,10 +1,10 @@
 #include QMK_KEYBOARD_H
 #include "version.h"
 
+// This keymap is intented to work with US Int keymap
+
 #define BASE 0 // default layer
-#define SYMB 1 // symbols
-#define MDIA 2 // media keys
-// #define ACCN 3 // Accents layer
+#define FCNT 1 // function keys
 
 // TODO test a BEAKL Layer
 
@@ -15,7 +15,21 @@ enum custom_keycodes {
   EPRM = SAFE_RANGE,
 #endif
   VRSN,
-  RGB_SLD
+  RGB_SLD,
+  QUOTE,
+  BQUOTE,
+  EACUTE,
+  EGRAVE,
+  AGRAVE,
+  CCEDIL
+};
+
+// Tap dance key definition
+enum {
+  TD_W = 0,
+  TD_E,
+  TD_A,
+  TD_C
 };
 
 /* Custom names for clarity */
@@ -32,8 +46,8 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
  * |--------+------+------+------+------+-------------|           |------+------+------+------+------+------+--------|
  * | Tab    |   Q  |   W  |   E  |   R  |   T  |      |           |Reset |   Y  |   U  |   I  |   O  |   P  |   \    |
  * |--------+------+------+------+------+------|      |           |      |------+------+------+------+------+--------|
- * | Esc    |   A  |   S  |   D  |   F  |   G  |------|           |------|   H  |   J  |   K  |   L  |   ;  |   '    |
- * |--------+------+------+------+------+------| Ctl_B|           |      |------+------+------+------+------+--------|
+ * |Esc/LALT|   A  |   S  |   D  |   F  |   G  |------|           |------|   H  |   J  |   K  |   L  |   ;  | '/RALT |
+ * |--------+------+------+------+------+------| Ctl_B|           |EEPROM|------+------+------+------+------+--------|
  * | LShift |Z/Ctrl|   X  |   C  |   V  |   B  |      |           |      |   N  |   M  |   ,  |   .  |//Ctrl| RShift |
  * `--------+------+------+------+------+-------------'           `-------------+------+------+------+------+--------'
  *   |      | Grv  |      | Left | Right|                                       |  Up  | Down |   [  |   ]  |      |
@@ -42,17 +56,17 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
  *                                        | Meta | Ins  |       | Del  | Meta |
  *                                 ,------|------|------|       |------+------+------.
  *                                 |      |      | Home |       | PgUp |      |      |
- *                                 | Space|Backsp|------|       |------| Alt  |Enter |
- *                                 |      |ace   | End  |       | PgDn |      |      |
+ *                                 | Space|Backsp|------|       |------| KC_  |Enter |
+ *                                 |      |ace   | End  |       | PgDn | LEAD |      |
  *                                 `--------------------'       `--------------------'
  */
 [BASE] = LAYOUT_ergodox(
   // left hand
   KC_EQL,       KC_1,         KC_2,         KC_3,         KC_4,         KC_5,         _______,
-  KC_TAB,       KC_Q,         KC_W,         KC_E,         KC_R,         KC_T,         _______,
-  KC_ESC,       KC_A,         KC_S,         KC_D,         KC_F,         KC_G,
-  KC_LSFT,      CT_OR_Z,      KC_X,         KC_C,         KC_V,         KC_B,         TMUX,
-  _______,      KC_GRV,       _______,      KC_LEFT,      KC_RIGHT,
+  KC_TAB,       KC_Q,         TD(TD_W),     TD(TD_E),     KC_R,         KC_T,         OSL(FCNT),
+  LALT_T(KC_ESC), TD(TD_A),   KC_S,         KC_D,         KC_F,         KC_G,
+  KC_LSFT,      CT_OR_Z,      KC_X,         TD(TD_C),     KC_V,         KC_B,         _______,
+  _______,      BQUOTE,       _______,      KC_LEFT,      KC_RIGHT,
 
                                                                         META,         KC_INS,
                                                                                       KC_HOME,
@@ -60,98 +74,59 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
   //  right hand
   _______,      KC_6,         KC_7,         KC_8,         KC_9,         KC_0,         KC_MINS,
-  RESET,        KC_Y,         KC_U,         KC_I,         KC_O,         KC_P,         KC_BSLS,
-                KC_H,         KC_J,         KC_K,         KC_L,         KC_SCLN,      KC_QUOT,
+  _______,      KC_Y,         KC_U,         KC_I,         KC_O,         KC_P,         KC_BSLS,
+                KC_H,         KC_J,         KC_K,         KC_L,         KC_SCLN,      QUOTE,
   _______,      KC_N,         KC_M,         KC_COMM,      KC_DOT,       CT_OR_SL,     KC_RSFT,
                               KC_UP,        KC_DOWN,      KC_LBRC,      KC_RBRC,      _______,
 
   KC_DEL,       META,
   KC_PGUP,
-  KC_PGDN,      KC_LALT,      KC_ENT
+  KC_PGDN,      KC_LEAD,      KC_ENT
 ),
 
-/* Keymap 1: Symbol Layer
- *
- * ,---------------------------------------------------.           ,--------------------------------------------------.
- * |Version  |  F1  |  F2  |  F3  |  F4  |  F5  |      |           |      |  F6  |  F7  |  F8  |  F9  |  F10 |   F11  |
- * |---------+------+------+------+------+------+------|           |------+------+------+------+------+------+--------|
- * |         |   !  |   @  |   {  |   }  |   |  |      |           |      |   Up |   7  |   8  |   9  |   *  |   F12  |
- * |---------+------+------+------+------+------|      |           |      |------+------+------+------+------+--------|
- * |         |   #  |   $  |   (  |   )  |   `  |------|           |------| Down |   4  |   5  |   6  |   +  |        |
- * |---------+------+------+------+------+------|      |           |      |------+------+------+------+------+--------|
- * |         |   %  |   ^  |   [  |   ]  |   ~  |      |           |      |   &  |   1  |   2  |   3  |   \  |        |
- * `---------+------+------+------+------+-------------'           `-------------+------+------+------+------+--------'
- *   | EPRM  |      |      |      |      |                                       |      |    . |   0  |   =  |      |
- *   `-----------------------------------'                                       `----------------------------------'
- *                                        ,-------------.       ,-------------.
- *                                        |Animat|      |       |Toggle|Solid |
- *                                 ,------|------|------|       |------+------+------.
- *                                 |Bright|Bright|      |       |      |Hue-  |Hue+  |
- *                                 |ness- |ness+ |------|       |------|      |      |
- *                                 |      |      |      |       |      |      |      |
- *                                 `--------------------'       `--------------------'
- */
-[SYMB] = LAYOUT_ergodox(
-  // left hand
-  VRSN,    KC_F1,   KC_F2,   KC_F3,   KC_F4,   KC_F5,   _______,
-  _______, KC_EXLM, KC_AT,   KC_LCBR, KC_RCBR, KC_PIPE, _______,
-  _______, KC_HASH, KC_DLR,  KC_LPRN, KC_RPRN, KC_GRV,
-  _______, KC_PERC, KC_CIRC, KC_LBRC, KC_RBRC, KC_TILD, _______,
-  EPRM,    _______, _______, _______, _______,
-                                               RGB_MOD, _______,
-                                                        _______,
-                                      RGB_VAD, RGB_VAI, _______,
-  // right hand
-  _______, KC_F6,   KC_F7,   KC_F8,   KC_F9,   KC_F10,  KC_F11,
-  _______, KC_UP,   KC_7,    KC_8,    KC_9,    KC_ASTR, KC_F12,
-  KC_DOWN, KC_4,    KC_5,    KC_6,    KC_PLUS, _______,
-  _______, KC_AMPR, KC_1,    KC_2,    KC_3,    KC_BSLS, _______,
-  _______, KC_DOT,  KC_0,    KC_EQL,  _______,
-  RGB_TOG, RGB_SLD,
-  _______,
-  _______, RGB_HUD, RGB_HUI
-),
-
-/* Keymap 2: Media and mouse keys
+/* Keymap 1: Function layer
  *
  * ,--------------------------------------------------.           ,--------------------------------------------------.
- * |        |      |      |      |      |      |      |           |      |      |      |      |      |      |        |
+ * |        |  F1  |  F2  |  F3  |  F4  |  F5  |  F11 |           | F12  |  F6  |  F7  |  F8  |  F9  |  F10 |        |
  * |--------+------+------+------+------+-------------|           |------+------+------+------+------+------+--------|
- * |        |      |      | MsUp |      |      |      |           |      |      |      |      |      |      |        |
+ * |        |      |      |      |      |      |      |           |      |      |      |      |      |      |        |
  * |--------+------+------+------+------+------|      |           |      |------+------+------+------+------+--------|
- * |        |      |MsLeft|MsDown|MsRght|      |------|           |------|      |      |      |      |      |  Play  |
+ * |        |      |      |      |      |      |------|           |------|      |      |      |      |      |        |
  * |--------+------+------+------+------+------|      |           |      |------+------+------+------+------+--------|
- * |        |      |      |      |      |      |      |           |      |      |      | Prev | Next |      |        |
+ * |        |      |      |      |      |      |      |           |      |      |      |      |      |      |        |
  * `--------+------+------+------+------+-------------'           `-------------+------+------+------+------+--------'
- *   |      |      |      | Lclk | Rclk |                                       |VolUp |VolDn | Mute |      |      |
+ *   |      |      |      |      |      |                                       |      |      |      |      |      |
  *   `----------------------------------'                                       `----------------------------------'
  *                                        ,-------------.       ,-------------.
- *                                        |      |      |       |      |      |
- *                                 ,------|------|------|       |------+------+------.
- *                                 |      |      |      |       |      |      |Brwser|
- *                                 |      |      |------|       |------|      |Back  |
- *                                 |      |      |      |       |      |      |      |
- *                                 `--------------------'       `--------------------'
+ *                                        |      |      |       |      |        |
+ *                                 ,------|------|------|       |------+--------+------.
+ *                                 |      |      |      |       |      |        |      |
+ *                                 |      |      |------|       |------|        |      |
+ *                                 |      |      |      |       |      |        |      |
+ *                                 `--------------------'       `----------------------'
  */
-[MDIA] = LAYOUT_ergodox(
+[FCNT] = LAYOUT_ergodox(
   // left hand
-  _______, _______, _______, _______, _______, _______, _______,
-  _______, _______, _______, KC_MS_U, _______, _______, _______,
-  _______, _______, KC_MS_L, KC_MS_D, KC_MS_R, _______,
-  _______, _______, _______, _______, _______, _______, _______,
-  _______, _______, _______, KC_BTN1, KC_BTN2,
-                                               _______, _______,
-                                                        _______,
-                                      _______, _______, _______,
-  // right hand
-  _______, _______, _______, _______, _______, _______, _______,
-  _______, _______, _______, _______, _______, _______, _______,
-           _______, _______, _______, _______, _______, KC_MPLY,
-  _______, _______, _______, KC_MPRV, KC_MNXT, _______, _______,
-                    KC_VOLU, KC_VOLD, KC_MUTE, _______, _______,
-  _______, _______,
+  _______,      KC_F1,        KC_F2,        KC_F3,        KC_F4,        KC_F5,        KC_F11,
+  _______,      _______,      _______,      _______,      _______,      _______,      _______,
+  _______,      _______,      _______,      _______,      _______,      _______,
+  _______,      _______,      _______,      _______,      _______,      _______,      _______,
+  _______,      _______,      _______,      _______,      _______,
+
+                                                                        _______,      _______,
+                                                                                      _______,
+                                                          _______,      _______,      _______,
+
+  //  right hand
+  KC_F12,       KC_F6,        KC_F7,        KC_F8,        KC_F9,        KC_F10,       _______,
+  _______,      _______,      _______,      _______,      _______,      _______,      _______,
+                _______,      _______,      _______,      _______,      _______,      _______,
+  _______,      _______,      _______,      _______,      _______,      _______,      _______,
+                              _______,      _______,      _______,      _______,      _______,
+
+  _______,      _______,
   _______,
-  _______, _______, KC_WBAK
+  _______,      _______,      _______
 ),
 
 // /* Keymap x: Blank layer as a template
@@ -200,6 +175,91 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 // ),
 };
 
+void send_string_without_mods(const char* str) {
+  uint8_t mods = get_mods();
+  clear_mods();
+  send_string(str);
+  set_mods(mods);
+}
+
+void send_key_eacute(void) {
+  send_string_without_mods("'");
+  SEND_STRING("e");
+}
+
+void td_send_key_eacute(qk_tap_dance_state_t *state, void *user_data) {
+  switch(state->count) {
+    case 2:
+      send_key_eacute();
+      break;
+    default:
+      SEND_STRING("w");
+      break;
+  }
+}
+
+void send_key_egrave(void) {
+  send_string_without_mods("`");
+  SEND_STRING("e");
+}
+
+void td_send_key_egrave(qk_tap_dance_state_t *state, void *user_data) {
+  switch(state->count) {
+    case 2:
+      send_key_egrave();
+      break;
+    default:
+      SEND_STRING("e");
+      break;
+  }
+}
+
+void send_key_agrave(void) {
+  send_string_without_mods("`");
+  SEND_STRING("a");
+}
+
+void td_send_key_agrave(qk_tap_dance_state_t *state, void *user_data) {
+  switch(state->count) {
+    case 2:
+      send_key_agrave();
+      break;
+    default:
+      SEND_STRING("a");
+      break;
+  }
+}
+
+void send_key_ccedil(void) {
+  send_string_without_mods(SS_ALGR(","));
+  SEND_STRING("c");
+}
+
+void td_send_key_ccedil(qk_tap_dance_state_t *state, void *user_data) {
+  switch(state->count) {
+    case 2:
+      send_key_ccedil();
+      break;
+    default:
+      SEND_STRING("c");
+      break;
+  }
+}
+
+// Tap dancing !
+qk_tap_dance_action_t tap_dance_actions[] = {
+ [TD_W] = ACTION_TAP_DANCE_FN(td_send_key_eacute),
+ [TD_E] = ACTION_TAP_DANCE_FN(td_send_key_egrave),
+ [TD_A] = ACTION_TAP_DANCE_FN(td_send_key_agrave),
+ [TD_C] = ACTION_TAP_DANCE_FN(td_send_key_ccedil),
+};
+
+// Configuration at EEPROM Reset
+void eeconfig_init_user(void) {
+  // Unicode for Linux
+  set_unicode_input_mode(UC_LNX);
+}
+
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
   if (record->event.pressed) {
     switch (keycode) {
@@ -214,8 +274,27 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
         rgblight_mode(1);
         return false;
       #endif
+      case QUOTE:
+        SEND_STRING("' ");
+        return true;
+      case BQUOTE:
+        SEND_STRING("` ");
+        return true;
+      case EACUTE:
+        send_key_eacute();
+        return true;
+      case EGRAVE:
+        send_key_egrave();
+        return true;
+      case AGRAVE:
+        send_key_agrave();
+        return true;
+      case CCEDIL:
+        send_key_ccedil();
+        return true;
     }
   }
+
   return true;
 }
 
@@ -225,6 +304,46 @@ void matrix_init_user(void) {
   rgblight_setrgb(RGBLIGHT_COLOR_LAYER_0);
 #endif
 };
+
+LEADER_EXTERNS();
+
+// Switch lights on when using leader mode
+void leader_start(void) {
+  ergodox_right_led_1_on();
+  ergodox_right_led_2_on();
+  ergodox_right_led_3_on();
+}
+
+// Switch lights off when  leader mode
+void leader_end(void) {
+  ergodox_right_led_1_off();
+  ergodox_right_led_2_off();
+  ergodox_right_led_3_off();
+}
+
+void matrix_scan_user(void) {
+  LEADER_DICTIONARY() {
+    leading = false;
+
+    // Lock PC
+    SEQ_ONE_KEY(KC_L) {
+      SEND_STRING(SS_LCTL(SS_LALT("l")));
+    }
+
+    // QMK_RESET
+    SEQ_TWO_KEYS(KC_Q, KC_R) {
+      reset_keyboard();
+    }
+
+    // QMK INIT EEPROM
+    SEQ_TWO_KEYS(KC_Q, KC_I) {
+      eeconfig_init();
+    }
+
+    leader_end();
+  }
+}
+
 
 // Runs whenever there is a layer state change.
 layer_state_t layer_state_set_user(layer_state_t state) {
@@ -237,60 +356,35 @@ layer_state_t layer_state_set_user(layer_state_t state) {
   uint8_t layer = get_highest_layer(state);
   switch (layer) {
       case 0:
-        #ifdef RGBLIGHT_COLOR_LAYER_0
-          rgblight_setrgb(RGBLIGHT_COLOR_LAYER_0);
-        #else
         #ifdef RGBLIGHT_ENABLE
           rgblight_init();
-        #endif
         #endif
         break;
       case 1:
         ergodox_right_led_1_on();
-        #ifdef RGBLIGHT_COLOR_LAYER_1
-          rgblight_setrgb(RGBLIGHT_COLOR_LAYER_1);
-        #endif
         break;
       case 2:
         ergodox_right_led_2_on();
-        #ifdef RGBLIGHT_COLOR_LAYER_2
-          rgblight_setrgb(RGBLIGHT_COLOR_LAYER_2);
-        #endif
         break;
       case 3:
         ergodox_right_led_3_on();
-        #ifdef RGBLIGHT_COLOR_LAYER_3
-          rgblight_setrgb(RGBLIGHT_COLOR_LAYER_3);
-        #endif
         break;
       case 4:
         ergodox_right_led_1_on();
         ergodox_right_led_2_on();
-        #ifdef RGBLIGHT_COLOR_LAYER_4
-          rgblight_setrgb(RGBLIGHT_COLOR_LAYER_4);
-        #endif
         break;
       case 5:
         ergodox_right_led_1_on();
         ergodox_right_led_3_on();
-        #ifdef RGBLIGHT_COLOR_LAYER_5
-          rgblight_setrgb(RGBLIGHT_COLOR_LAYER_5);
-        #endif
         break;
       case 6:
         ergodox_right_led_2_on();
         ergodox_right_led_3_on();
-        #ifdef RGBLIGHT_COLOR_LAYER_6
-          rgblight_setrgb(RGBLIGHT_COLOR_LAYER_6);
-        #endif
         break;
       case 7:
         ergodox_right_led_1_on();
         ergodox_right_led_2_on();
         ergodox_right_led_3_on();
-        #ifdef RGBLIGHT_COLOR_LAYER_7
-          rgblight_setrgb(RGBLIGHT_COLOR_LAYER_7);
-        #endif
         break;
       default:
         break;
