@@ -340,6 +340,56 @@ void matrix_scan_user(void) {
       eeconfig_init();
     }
 
+    // KEYBOARD JP INT1 ROMAJI
+    SEQ_TWO_KEYS(KC_K, KC_R) {
+      tap_code(KC_RO);
+    }
+
+    // KEYBOARD JP INT2 KANA {
+    SEQ_TWO_KEYS(KC_K, KC_K) {
+      tap_code(KC_KANA);
+    }
+
+    // KEYBOARD JP INT3 JYEN {
+    SEQ_TWO_KEYS(KC_K, KC_J) {
+      tap_code(KC_JYEN);
+    }
+
+    // KEYBOARD JP INT4 HENK {
+    SEQ_TWO_KEYS(KC_K, KC_H) {
+      tap_code(KC_HENK);
+    }
+
+    // KEYBOARD JP INT5 mhen {
+    SEQ_TWO_KEYS(KC_K, KC_M) {
+      tap_code(KC_MHEN);
+    }
+
+    // KEYBOARD JP LANG1
+    SEQ_TWO_KEYS(KC_K, KC_1) {
+      tap_code(KC_LANG1);
+    }
+
+    // KEYBOARD JP LANG2
+    SEQ_TWO_KEYS(KC_K, KC_2) {
+      tap_code(KC_LANG2);
+    }
+
+    // KEYBOARD JP LANG3
+    SEQ_TWO_KEYS(KC_K, KC_3) {
+      tap_code(KC_LANG3);
+    }
+
+    // KEYBOARD JP LANG4
+    SEQ_TWO_KEYS(KC_K, KC_4) {
+      tap_code(KC_LANG4);
+    }
+
+    // KEYBOARD JP LANG5
+    SEQ_TWO_KEYS(KC_K, KC_5) {
+      tap_code(KC_LANG5);
+    }
+
     leader_end();
   }
 }

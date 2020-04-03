@@ -4,6 +4,12 @@
 #define ONESHOT_TAP_TOGGLE 2  /* Tapping this number of times holds the key until tapped once again. */
 #define ONESHOT_TIMEOUT 5000  /* Time (in ms) before the one shot key is released */
 
+// Tapping configuration
+#define PERMISSIVE_HOLD
+//#define IGNORE_MOD_TAP_INTERRUPT
+#define TAPPING_FORCE_HOLD
+#define RETRO_TAPPING
+
 // #define TAPPING_TOGGLE 2  /* Tapping this number of tiles to enable or disable a layer with TT */
 #undef  TAPPING_TERM
 #define TAPPING_TERM 175  /* Maximum time between two taps */
