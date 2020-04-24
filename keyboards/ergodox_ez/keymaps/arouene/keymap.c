@@ -6,6 +6,7 @@
 #define BASE 0 // default layer
 #define FCNT 1 // function keys
 #define GAME 2 // gaming layer
+#define BEAKL 3 // beakl layer
 
 // TODO test a BEAKL Layer
 
@@ -16,11 +17,7 @@ enum custom_keycodes {
   EPRM = SAFE_RANGE,
 #endif
   VRSN,
-  RGB_SLD,
-  EACUTE,
-  EGRAVE,
-  AGRAVE,
-  CCEDIL
+  RGB_SLD
 };
 
 // Tap dance key definition
@@ -35,6 +32,13 @@ enum {
 #define CT_OR_Z CTL_T(KC_Z)
 #define CT_OR_SL CTL_T(KC_SLSH)
 #define META KC_LGUI
+
+/* Custom Keycode */
+#define UC_EACUTE 0xe9
+#define UC_EGRAVE 0xe8
+#define UC_AGRAVE 0xe0
+#define UC_CCEDIL 0xe7
+
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 /* Keymap 0: Basic layer
@@ -263,22 +267,16 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 // ),
 };
 
-void send_string_without_mods(const char* str) {
-  uint8_t mods = get_mods();
-  clear_mods();
-  send_string(str);
-  set_mods(mods);
-}
-
-void send_key_eacute(void) {
-  send_string_without_mods("'");
-  SEND_STRING("e");
+void send_unicode(unsigned int cp) {
+  unicode_input_start();
+  register_hex(cp);
+  unicode_input_finish();
 }
 
 void td_send_key_eacute(qk_tap_dance_state_t *state, void *user_data) {
   switch(state->count) {
     case 2:
-      send_key_eacute();
+      send_unicode(UC_EACUTE);
       break;
     default:
       SEND_STRING("w");
@@ -286,15 +284,10 @@ void td_send_key_eacute(qk_tap_dance_state_t *state, void *user_data) {
   }
 }
 
-void send_key_egrave(void) {
-  send_string_without_mods("`");
-  SEND_STRING("e");
-}
-
 void td_send_key_egrave(qk_tap_dance_state_t *state, void *user_data) {
   switch(state->count) {
     case 2:
-      send_key_egrave();
+      send_unicode(UC_EGRAVE);
       break;
     default:
       SEND_STRING("e");
@@ -302,15 +295,10 @@ void td_send_key_egrave(qk_tap_dance_state_t *state, void *user_data) {
   }
 }
 
-void send_key_agrave(void) {
-  send_string_without_mods("`");
-  SEND_STRING("a");
-}
-
 void td_send_key_agrave(qk_tap_dance_state_t *state, void *user_data) {
   switch(state->count) {
     case 2:
-      send_key_agrave();
+      send_unicode(UC_AGRAVE);
       break;
     default:
       SEND_STRING("a");
@@ -318,14 +306,10 @@ void td_send_key_agrave(qk_tap_dance_state_t *state, void *user_data) {
   }
 }
 
-void send_key_ccedil(void) {
-  SEND_STRING(UC(0x00E7));
-}
-
 void td_send_key_ccedil(qk_tap_dance_state_t *state, void *user_data) {
   switch(state->count) {
     case 2:
-      send_key_ccedil();
+      send_unicode(UC_CCEDIL);
       break;
     default:
       SEND_STRING("c");
@@ -361,18 +345,6 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
         rgblight_mode(1);
         return false;
       #endif
-      case EACUTE:
-        send_key_eacute();
-        return true;
-      case EGRAVE:
-        send_key_egrave();
-        return true;
-      case AGRAVE:
-        send_key_agrave();
-        return true;
-      case CCEDIL:
-        send_key_ccedil();
-        return true;
     }
   }
 
