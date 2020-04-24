@@ -5,6 +5,7 @@
 
 #define BASE 0 // default layer
 #define FCNT 1 // function keys
+#define GAME 2 // gaming layer
 
 // TODO test a BEAKL Layer
 
@@ -16,8 +17,6 @@ enum custom_keycodes {
 #endif
   VRSN,
   RGB_SLD,
-  QUOTE,
-  BQUOTE,
   EACUTE,
   EGRAVE,
   AGRAVE,
@@ -33,7 +32,6 @@ enum {
 };
 
 /* Custom names for clarity */
-#define TMUX LCTL(KC_B)
 #define CT_OR_Z CTL_T(KC_Z)
 #define CT_OR_SL CTL_T(KC_SLSH)
 #define META KC_LGUI
@@ -44,13 +42,13 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
  * ,--------------------------------------------------.           ,--------------------------------------------------.
  * |   =    |   1  |   2  |   3  |   4  |   5  |      |           |      |   6  |   7  |   8  |   9  |   0  |   -    |
  * |--------+------+------+------+------+-------------|           |------+------+------+------+------+------+--------|
- * | Tab    |   Q  |   W  |   E  |   R  |   T  |      |           |Reset |   Y  |   U  |   I  |   O  |   P  |   \    |
+ * | Tab    |   Q  |   W  |   E  |   R  |   T  | FCNT |           |Reset |   Y  |   U  |   I  |   O  |   P  |   \    |
  * |--------+------+------+------+------+------|      |           |      |------+------+------+------+------+--------|
  * |Esc/LALT|   A  |   S  |   D  |   F  |   G  |------|           |------|   H  |   J  |   K  |   L  |   ;  | '/RALT |
- * |--------+------+------+------+------+------| Ctl_B|           |EEPROM|------+------+------+------+------+--------|
+ * |--------+------+------+------+------+------| GAME |           |EEPROM|------+------+------+------+------+--------|
  * | LShift |Z/Ctrl|   X  |   C  |   V  |   B  |      |           |      |   N  |   M  |   ,  |   .  |//Ctrl| RShift |
  * `--------+------+------+------+------+-------------'           `-------------+------+------+------+------+--------'
- *   |      | Grv  |      | Left | Right|                                       |  Up  | Down |   [  |   ]  |      |
+ *   |      |   `  |      | Left | Right|                                       |  Up  | Down |   [  |   ]  |      |
  *   `----------------------------------'                                       `----------------------------------'
  *                                        ,-------------.       ,-------------.
  *                                        | Meta | Ins  |       | Del  | Meta |
@@ -65,8 +63,8 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   KC_EQL,       KC_1,         KC_2,         KC_3,         KC_4,         KC_5,         _______,
   KC_TAB,       KC_Q,         TD(TD_W),     TD(TD_E),     KC_R,         KC_T,         OSL(FCNT),
   LALT_T(KC_ESC), TD(TD_A),   KC_S,         KC_D,         KC_F,         KC_G,
-  KC_LSFT,      CT_OR_Z,      KC_X,         TD(TD_C),     KC_V,         KC_B,         _______,
-  _______,      BQUOTE,       _______,      KC_LEFT,      KC_RIGHT,
+  KC_LSFT,      CT_OR_Z,      KC_X,         TD(TD_C),     KC_V,         KC_B,         TG(GAME),
+  _______,      KC_GRAVE,     _______,      KC_LEFT,      KC_RIGHT,
 
                                                                         META,         KC_INS,
                                                                                       KC_HOME,
@@ -75,7 +73,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   //  right hand
   _______,      KC_6,         KC_7,         KC_8,         KC_9,         KC_0,         KC_MINS,
   _______,      KC_Y,         KC_U,         KC_I,         KC_O,         KC_P,         KC_BSLS,
-                KC_H,         KC_J,         KC_K,         KC_L,         KC_SCLN,      QUOTE,
+                KC_H,         KC_J,         KC_K,         KC_L,         KC_SCLN,      RALT_T(KC_QUOTE),
   _______,      KC_N,         KC_M,         KC_COMM,      KC_DOT,       CT_OR_SL,     KC_RSFT,
                               KC_UP,        KC_DOWN,      KC_LBRC,      KC_RBRC,      _______,
 
@@ -129,7 +127,97 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   _______,      _______,      _______
 ),
 
-// /* Keymap x: Blank layer as a template
+/* Keymap 2: Gaming layer
+ *
+ * ,--------------------------------------------------.           ,--------------------------------------------------.
+ * |        |      |      |      |      |      |      |           |      |      |      |      |      |      |        |
+ * |--------+------+------+------+------+-------------|           |------+------+------+------+------+------+--------|
+ * |        |   Q  |   W  |   E  |      |      |      |           |      |      |      |      |      |      |        |
+ * |--------+------+------+------+------+------|      |           |      |------+------+------+------+------+--------|
+ * |        |   A  |   S  |   D  |      |      |------|           |------|      |      |      |      |      |        |
+ * |--------+------+------+------+------+------|      |           |      |------+------+------+------+------+--------|
+ * |        |      |      |      |      |      |      |           |      |      |      |      |      |      |        |
+ * `--------+------+------+------+------+-------------'           `-------------+------+------+------+------+--------'
+ *   |      |      |      |      |      |                                       |      |      |      |      |      |
+ *   `----------------------------------'                                       `----------------------------------'
+ *                                        ,-------------.       ,-------------.
+ *                                        |      |      |       |      |        |
+ *                                 ,------|------|------|       |------+--------+------.
+ *                                 |      |      |      |       |      |        |      |
+ *                                 |      |      |------|       |------|        |      |
+ *                                 |      |      |      |       |      |        |      |
+ *                                 `--------------------'       `----------------------'
+ */
+[GAME] = LAYOUT_ergodox(
+  // left hand
+  _______,      _______,      _______,      _______,      _______,      _______,      _______,
+  _______,      KC_Q,         KC_W,         KC_E,         _______,      _______,      _______,
+  _______,      KC_A,         KC_S,         KC_D,         _______,      _______,
+  _______,      _______,      _______,      _______,      _______,      _______,      _______,
+  _______,      _______,      _______,      _______,      _______,
+
+                                                                        _______,      _______,
+                                                                                      _______,
+                                                          _______,      _______,      _______,
+
+  //  right hand
+  _______,      _______,      _______,      _______,      _______,      _______,      _______,
+  _______,      _______,      _______,      _______,      _______,      _______,      _______,
+                _______,      _______,      _______,      _______,      _______,      _______,
+  _______,      _______,      _______,      _______,      _______,      _______,      _______,
+                              _______,      _______,      _______,      _______,      _______,
+
+  _______,      _______,
+  _______,
+  _______,      _______,      _______
+),
+
+//  /* Keymap x: Test BEAKL Lafayette
+//  *
+//  * ,--------------------------------------------------.           ,--------------------------------------------------.
+//  * |        |   1  |   2  |   3  |   4  |   5  |      |           |      |  6   |  7   |  8   |  9   |  0   |        |
+//  * |--------+------+------+------+------+-------------|           |------+------+------+------+------+------+--------|
+//  * |        |   J  |   Y  |   O  |   U  |   K  |      |           |      |  G   |  C   |  M   |  N   |  Z   |        |
+//  * |--------+------+------+------+------+------|      |           |      |------+------+------+------+------+--------|
+//  * |        |   H  |   I  |   E  |   A  |      |------|           |------|  D   |  S   |  T   |  R   |  P   |        |
+//  * |--------+------+------+------+------+------|      |           |      |------+------+------+------+------+--------|
+//  * |        |   Q  |      |      |      |   X  |      |           |      |  W   |  F   |  L   |  B   |  V   |        |
+//  * `--------+------+------+------+------+-------------'           `-------------+------+------+------+------+--------'
+//  *   |      |      |      |      |      |                                       |      |      |      |      |      |
+//  *   `----------------------------------'                                       `----------------------------------'
+//  *                                        ,-------------.       ,-------------.
+//  *                                        |      |      |       |      |        |
+//  *                                 ,------|------|------|       |------+--------+------.
+//  *                                 |      |      |      |       |      |        |      |
+//  *                                 |      |      |------|       |------|        |      |
+//  *                                 |      |      |      |       |      |        |      |
+//  *                                 `--------------------'       `----------------------'
+//  */
+[BEAKL] = LAYOUT_ergodox(
+  // left hand
+  _______,      _______,      _______,      _______,      _______,      _______,      _______,
+  _______,      _______,      _______,      _______,      _______,      _______,      _______,
+  _______,      _______,      _______,      _______,      _______,      _______,
+  _______,      _______,      _______,      _______,      _______,      _______,      _______,
+  _______,      _______,      _______,      _______,      _______,
+
+                                                                        _______,      _______,
+                                                                                      _______,
+                                                          _______,      _______,      _______,
+
+  //  right hand
+  _______,      _______,      _______,      _______,      _______,      _______,      _______,
+  _______,      _______,      _______,      _______,      _______,      _______,      _______,
+                _______,      _______,      _______,      _______,      _______,      _______,
+  _______,      _______,      _______,      _______,      _______,      _______,      _______,
+                              _______,      _______,      _______,      _______,      _______,
+
+  _______,      _______,
+  _______,
+  _______,      _______,      _______
+),
+
+//    /* Keymap x: Blank layer as a template
 //  *
 //  * ,--------------------------------------------------.           ,--------------------------------------------------.
 //  * |        |      |      |      |      |      |      |           |      |      |      |      |      |      |        |
@@ -231,8 +319,7 @@ void td_send_key_agrave(qk_tap_dance_state_t *state, void *user_data) {
 }
 
 void send_key_ccedil(void) {
-  send_string_without_mods(SS_ALGR(","));
-  SEND_STRING("c");
+  SEND_STRING(UC(0x00E7));
 }
 
 void td_send_key_ccedil(qk_tap_dance_state_t *state, void *user_data) {
@@ -274,12 +361,6 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
         rgblight_mode(1);
         return false;
       #endif
-      case QUOTE:
-        SEND_STRING("' ");
-        return true;
-      case BQUOTE:
-        SEND_STRING("` ");
-        return true;
       case EACUTE:
         send_key_eacute();
         return true;
@@ -330,6 +411,11 @@ void matrix_scan_user(void) {
       SEND_STRING(SS_LCTL(SS_LALT("l")));
     }
 
+    // Print screen
+    SEQ_ONE_KEY(KC_P) {
+      tap_code(KC_PSCR);
+    }
+
     // QMK_RESET
     SEQ_TWO_KEYS(KC_Q, KC_R) {
       reset_keyboard();
@@ -340,54 +426,72 @@ void matrix_scan_user(void) {
       eeconfig_init();
     }
 
-    // KEYBOARD JP INT1 ROMAJI
-    SEQ_TWO_KEYS(KC_K, KC_R) {
-      tap_code(KC_RO);
-    }
-
-    // KEYBOARD JP INT2 KANA {
-    SEQ_TWO_KEYS(KC_K, KC_K) {
-      tap_code(KC_KANA);
-    }
-
-    // KEYBOARD JP INT3 JYEN {
-    SEQ_TWO_KEYS(KC_K, KC_J) {
-      tap_code(KC_JYEN);
-    }
-
-    // KEYBOARD JP INT4 HENK {
-    SEQ_TWO_KEYS(KC_K, KC_H) {
-      tap_code(KC_HENK);
-    }
-
-    // KEYBOARD JP INT5 mhen {
-    SEQ_TWO_KEYS(KC_K, KC_M) {
-      tap_code(KC_MHEN);
-    }
+    //
+    // I18N
+    //
 
     // KEYBOARD JP LANG1
-    SEQ_TWO_KEYS(KC_K, KC_1) {
+    // KC_HAEN (kr) or JP_MKANA (jp)
+    SEQ_TWO_KEYS(KC_K, KC_Q) {
       tap_code(KC_LANG1);
     }
 
     // KEYBOARD JP LANG2
-    SEQ_TWO_KEYS(KC_K, KC_2) {
+    // KC_HANJ (kr) or JP_MEISU (jp)
+    SEQ_TWO_KEYS(KC_K, KC_W) {
       tap_code(KC_LANG2);
     }
 
     // KEYBOARD JP LANG3
-    SEQ_TWO_KEYS(KC_K, KC_3) {
+    // Katakana (jp)
+    SEQ_TWO_KEYS(KC_K, KC_E) {
       tap_code(KC_LANG3);
     }
 
     // KEYBOARD JP LANG4
-    SEQ_TWO_KEYS(KC_K, KC_4) {
+    // Hiragana (jp)
+    SEQ_TWO_KEYS(KC_K, KC_R) {
       tap_code(KC_LANG4);
     }
 
     // KEYBOARD JP LANG5
-    SEQ_TWO_KEYS(KC_K, KC_5) {
+    SEQ_TWO_KEYS(KC_K, KC_T) {
       tap_code(KC_LANG5);
+    }
+
+    //  KEYBOARD JP EISU (CAPS) -> Latin mode
+    SEQ_TWO_KEYS(KC_K, KC_A) {
+      tap_code(KC_CAPS);
+    }
+
+    // KEYBOARD JP ZKHK (Zenkaku/Henkaku)
+    SEQ_TWO_KEYS(KC_K, KC_S) {
+      tap_code(KC_GRAVE);
+    }
+
+    // KEYBOARD JP MUHENKAN
+    SEQ_TWO_KEYS(KC_K, KC_D) {
+      tap_code(KC_INT5);
+    }
+
+    // KEYBOARD JP HENKAN
+    SEQ_TWO_KEYS(KC_K, KC_F) {
+      tap_code(KC_INT4);
+    }
+
+    // KEYBOARD JP YEN
+    SEQ_TWO_KEYS(KC_K, KC_K) {
+      tap_code(KC_INT3);
+    }
+
+    // KEYBOARD JP KANA
+    SEQ_TWO_KEYS(KC_K, KC_G) {
+      tap_code(KC_INT2);
+    }
+
+    // CUSTOM Disable IME
+    SEQ_TWO_KEYS(KC_K, KC_J) {
+      SEND_STRING(SS_LCTL(SS_LALT("`")));
     }
 
     leader_end();

@@ -7,8 +7,8 @@
 // Tapping configuration
 #define PERMISSIVE_HOLD
 //#define IGNORE_MOD_TAP_INTERRUPT
-#define TAPPING_FORCE_HOLD
-#define RETRO_TAPPING
+//#define TAPPING_FORCE_HOLD
+//#define RETRO_TAPPING
 
 // #define TAPPING_TOGGLE 2  /* Tapping this number of tiles to enable or disable a layer with TT */
 #undef  TAPPING_TERM
