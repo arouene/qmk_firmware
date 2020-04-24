@@ -4,7 +4,7 @@ BOOTMAGIC_ENABLE = no  # Virtual DIP switch configuration
 MOUSEKEY_ENABLE  = yes # Mouse keys
 EXTRAKEY_ENABLE  = yes # Audio control and System control
 CONSOLE_ENABLE   = no  # Console for debug
-COMMAND_ENABLE   = yes # Commands for debug and configuration
+COMMAND_ENABLE   = no  # Commands for debug and configuration
 CUSTOM_MATRIX    = yes # Custom matrix file for the ErgoDox EZ
 NKRO_ENABLE      = yes # USB Nkey Rollover
 UNICODE_ENABLE   = yes # Unicode
@@ -16,6 +16,3 @@ SLEEP_LED_ENABLE = no
 API_SYSEX_ENABLE = no
 RGBLIGHT_ENABLE  = no
 RGBLIGHT_CUSTOM_DRIVER = no
-
-RGB_MATRIX_ENABLE = no
-DEBOUNCE_TYPE = eager_pr

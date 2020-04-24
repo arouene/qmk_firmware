@@ -34,10 +34,11 @@ enum {
 #define META KC_LGUI
 
 /* Custom Keycode */
-#define UC_EACUTE 0xe9
-#define UC_EGRAVE 0xe8
 #define UC_AGRAVE 0xe0
 #define UC_CCEDIL 0xe7
+#define UC_EGRAVE 0xe8
+#define UC_EACUTE 0xe9
+#define UC_ETREMA 0xeb
 
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
@@ -268,52 +269,63 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 };
 
 void send_unicode(unsigned int cp) {
+  uint8_t mods = get_mods();
+
+  if (mods & MOD_MASK_SHIFT) {
+    cp -= 0x20;
+  }
+
+  clear_mods();
   unicode_input_start();
   register_hex(cp);
   unicode_input_finish();
+  set_mods(mods);
 }
 
 void td_send_key_eacute(qk_tap_dance_state_t *state, void *user_data) {
   switch(state->count) {
-    case 2:
-      send_unicode(UC_EACUTE);
-      break;
-    default:
-      SEND_STRING("w");
-      break;
+  case 3:
+    send_unicode(UC_ETREMA);
+    break;
+  case 2:
+    send_unicode(UC_EACUTE);
+    break;
+  default:
+    SEND_STRING("w");
+    break;
   }
 }
 
 void td_send_key_egrave(qk_tap_dance_state_t *state, void *user_data) {
   switch(state->count) {
-    case 2:
-      send_unicode(UC_EGRAVE);
-      break;
-    default:
-      SEND_STRING("e");
-      break;
+  case 2:
+    send_unicode(UC_EGRAVE);
+    break;
+  default:
+    SEND_STRING("e");
+    break;
   }
 }
 
 void td_send_key_agrave(qk_tap_dance_state_t *state, void *user_data) {
   switch(state->count) {
-    case 2:
-      send_unicode(UC_AGRAVE);
-      break;
-    default:
-      SEND_STRING("a");
-      break;
+  case 2:
+    send_unicode(UC_AGRAVE);
+    break;
+  default:
+    SEND_STRING("a");
+    break;
   }
 }
 
 void td_send_key_ccedil(qk_tap_dance_state_t *state, void *user_data) {
   switch(state->count) {
-    case 2:
-      send_unicode(UC_CCEDIL);
-      break;
-    default:
-      SEND_STRING("c");
-      break;
+  case 2:
+    send_unicode(UC_CCEDIL);
+    break;
+  default:
+    SEND_STRING("c");
+    break;
   }
 }
 
@@ -398,72 +410,24 @@ void matrix_scan_user(void) {
       eeconfig_init();
     }
 
-    //
-    // I18N
-    //
-
-    // KEYBOARD JP LANG1
-    // KC_HAEN (kr) or JP_MKANA (jp)
-    SEQ_TWO_KEYS(KC_K, KC_Q) {
-      tap_code(KC_LANG1);
-    }
-
-    // KEYBOARD JP LANG2
-    // KC_HANJ (kr) or JP_MEISU (jp)
-    SEQ_TWO_KEYS(KC_K, KC_W) {
-      tap_code(KC_LANG2);
-    }
-
-    // KEYBOARD JP LANG3
-    // Katakana (jp)
-    SEQ_TWO_KEYS(KC_K, KC_E) {
-      tap_code(KC_LANG3);
-    }
-
-    // KEYBOARD JP LANG4
-    // Hiragana (jp)
-    SEQ_TWO_KEYS(KC_K, KC_R) {
-      tap_code(KC_LANG4);
-    }
-
-    // KEYBOARD JP LANG5
-    SEQ_TWO_KEYS(KC_K, KC_T) {
-      tap_code(KC_LANG5);
-    }
-
-    //  KEYBOARD JP EISU (CAPS) -> Latin mode
-    SEQ_TWO_KEYS(KC_K, KC_A) {
-      tap_code(KC_CAPS);
-    }
-
-    // KEYBOARD JP ZKHK (Zenkaku/Henkaku)
-    SEQ_TWO_KEYS(KC_K, KC_S) {
-      tap_code(KC_GRAVE);
-    }
-
-    // KEYBOARD JP MUHENKAN
-    SEQ_TWO_KEYS(KC_K, KC_D) {
-      tap_code(KC_INT5);
-    }
-
-    // KEYBOARD JP HENKAN
-    SEQ_TWO_KEYS(KC_K, KC_F) {
-      tap_code(KC_INT4);
-    }
-
-    // KEYBOARD JP YEN
+    // CAPSLOCK
     SEQ_TWO_KEYS(KC_K, KC_K) {
-      tap_code(KC_INT3);
-    }
-
-    // KEYBOARD JP KANA
-    SEQ_TWO_KEYS(KC_K, KC_G) {
-      tap_code(KC_INT2);
+      tap_code(KC_CAPS);
     }
 
     // CUSTOM Disable IME
     SEQ_TWO_KEYS(KC_K, KC_J) {
       SEND_STRING(SS_LCTL(SS_LALT("`")));
+    }
+
+    // Katakana
+    SEQ_TWO_KEYS(KC_K, KC_U) {
+      tap_code(KC_LANG3);
+    }
+
+    // Hiragana
+    SEQ_TWO_KEYS(KC_K, KC_I) {
+      tap_code(KC_LANG4);
     }
 
     leader_end();
