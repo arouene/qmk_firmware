@@ -268,18 +268,34 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 // ),
 };
 
-void send_unicode(unsigned int cp) {
-  uint8_t mods = get_mods();
+void unicode_input_start(void) {
+    unicode_saved_mods = get_mods();
+    clear_mods();
 
-  if (mods & MOD_MASK_SHIFT) {
+    if (unicode_saved_mods & MOD_BIT(KC_RSHIFT)) {
+      tap_code16(LCTL(RSFT(KC_E)));
+    } else {
+      tap_code16(LCTL(LSFT(KC_E)));
+    }
+
+    wait_ms(UNICODE_TYPE_DELAY);
+}
+
+void unicode_input_finish(void) {
+    tap_code(KC_SPC);
+    tap_code(KC_ENT);
+
+    set_mods(unicode_saved_mods);
+}
+
+void send_unicode(unsigned int cp) {
+  if (get_mods() & MOD_MASK_SHIFT) {
     cp -= 0x20;
   }
 
-  clear_mods();
   unicode_input_start();
   register_hex(cp);
   unicode_input_finish();
-  set_mods(mods);
 }
 
 void td_send_key_eacute(qk_tap_dance_state_t *state, void *user_data) {
@@ -417,6 +433,7 @@ void matrix_scan_user(void) {
 
     // CUSTOM Disable IME
     SEQ_TWO_KEYS(KC_K, KC_J) {
+      //tap_code(KC_ZKHK);
       SEND_STRING(SS_LCTL("`"));
     }
 
