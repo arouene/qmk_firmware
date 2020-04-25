@@ -14,7 +14,7 @@
 #undef  TAPPING_TERM
 #define TAPPING_TERM 175  /* Maximum time between two taps */
 
-#define LEADER_TIMEOUT 250  /* Timeout after leader key is pressed */
+#define LEADER_TIMEOUT 300  /* Timeout after leader key is pressed */
 #define LEADER_PER_KEY_TIMING  /* The timeout is reset each times a key is pressed */
 
 #endif

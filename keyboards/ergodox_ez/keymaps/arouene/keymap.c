@@ -22,10 +22,11 @@ enum custom_keycodes {
 
 // Tap dance key definition
 enum {
-  TD_W = 0,
+  TD_A = 0,
+  TD_C,
   TD_E,
-  TD_A,
-  TD_C
+  TD_I,
+  TD_W
 };
 
 /* Custom names for clarity */
@@ -39,6 +40,10 @@ enum {
 #define UC_EGRAVE 0xe8
 #define UC_EACUTE 0xe9
 #define UC_ETREMA 0xeb
+#define UC_ITREMA 0xef
+
+/* Global variables */
+bool leading_mode = false;
 
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
@@ -77,7 +82,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
   //  right hand
   _______,      KC_6,         KC_7,         KC_8,         KC_9,         KC_0,         KC_MINS,
-  _______,      KC_Y,         KC_U,         KC_I,         KC_O,         KC_P,         KC_BSLS,
+  _______,      KC_Y,         KC_U,         TD(TD_I),     KC_O,         KC_P,         KC_BSLS,
                 KC_H,         KC_J,         KC_K,         KC_L,         KC_SCLN,      RALT_T(KC_QUOTE),
   _______,      KC_N,         KC_M,         KC_COMM,      KC_DOT,       CT_OR_SL,     KC_RSFT,
                               KC_UP,        KC_DOWN,      KC_LBRC,      KC_RBRC,      _______,
@@ -298,7 +303,21 @@ void send_unicode(unsigned int cp) {
   unicode_input_finish();
 }
 
-void td_send_key_eacute(qk_tap_dance_state_t *state, void *user_data) {
+void td_send_key_i(qk_tap_dance_state_t *state, void *user_data) {
+  if (leading_mode)
+    return;
+
+  switch(state->count) {
+  case 2:
+    send_unicode(UC_ITREMA);
+    break;
+  default:
+    tap_code(KC_I);
+    break;
+  }
+}
+
+void td_send_key_w(qk_tap_dance_state_t *state, void *user_data) {
   switch(state->count) {
   case 3:
     send_unicode(UC_ETREMA);
@@ -307,50 +326,51 @@ void td_send_key_eacute(qk_tap_dance_state_t *state, void *user_data) {
     send_unicode(UC_EACUTE);
     break;
   default:
-    SEND_STRING("w");
+    tap_code(KC_W);
     break;
   }
 }
 
-void td_send_key_egrave(qk_tap_dance_state_t *state, void *user_data) {
+void td_send_key_e(qk_tap_dance_state_t *state, void *user_data) {
   switch(state->count) {
   case 2:
     send_unicode(UC_EGRAVE);
     break;
   default:
-    SEND_STRING("e");
+    tap_code(KC_E);
     break;
   }
 }
 
-void td_send_key_agrave(qk_tap_dance_state_t *state, void *user_data) {
+void td_send_key_a(qk_tap_dance_state_t *state, void *user_data) {
   switch(state->count) {
   case 2:
     send_unicode(UC_AGRAVE);
     break;
   default:
-    SEND_STRING("a");
+    tap_code(KC_A);
     break;
   }
 }
 
-void td_send_key_ccedil(qk_tap_dance_state_t *state, void *user_data) {
+void td_send_key_c(qk_tap_dance_state_t *state, void *user_data) {
   switch(state->count) {
   case 2:
     send_unicode(UC_CCEDIL);
     break;
   default:
-    SEND_STRING("c");
+    tap_code(KC_C);
     break;
   }
 }
 
 // Tap dancing !
 qk_tap_dance_action_t tap_dance_actions[] = {
- [TD_W] = ACTION_TAP_DANCE_FN(td_send_key_eacute),
- [TD_E] = ACTION_TAP_DANCE_FN(td_send_key_egrave),
- [TD_A] = ACTION_TAP_DANCE_FN(td_send_key_agrave),
- [TD_C] = ACTION_TAP_DANCE_FN(td_send_key_ccedil),
+ [TD_A] = ACTION_TAP_DANCE_FN(td_send_key_a),
+ [TD_C] = ACTION_TAP_DANCE_FN(td_send_key_c),
+ [TD_E] = ACTION_TAP_DANCE_FN(td_send_key_e),
+ [TD_I] = ACTION_TAP_DANCE_FN(td_send_key_i),
+ [TD_W] = ACTION_TAP_DANCE_FN(td_send_key_w),
 };
 
 // Configuration at EEPROM Reset
@@ -390,6 +410,7 @@ LEADER_EXTERNS();
 
 // Switch lights on when using leader mode
 void leader_start(void) {
+  leading_mode = true;
   ergodox_right_led_1_on();
   ergodox_right_led_2_on();
   ergodox_right_led_3_on();
@@ -397,6 +418,7 @@ void leader_start(void) {
 
 // Switch lights off when  leader mode
 void leader_end(void) {
+  leading_mode = false;
   ergodox_right_led_1_off();
   ergodox_right_led_2_off();
   ergodox_right_led_3_off();
@@ -443,7 +465,7 @@ void matrix_scan_user(void) {
     }
 
     // Hiragana
-    SEQ_TWO_KEYS(KC_K, KC_I) {
+    SEQ_TWO_KEYS(KC_K, TD(TD_I)) {
       tap_code(KC_LANG4);
     }
 
