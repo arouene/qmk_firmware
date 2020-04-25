@@ -39,6 +39,7 @@ enum {
 #define UC_CCEDIL 0xe7
 #define UC_EGRAVE 0xe8
 #define UC_EACUTE 0xe9
+#define UC_ECIRCU 0xea
 #define UC_ETREMA 0xeb
 #define UC_ITREMA 0xef
 
@@ -333,6 +334,9 @@ void td_send_key_w(qk_tap_dance_state_t *state, void *user_data) {
 
 void td_send_key_e(qk_tap_dance_state_t *state, void *user_data) {
   switch(state->count) {
+  case 3:
+    send_unicode(UC_ECIRCU);
+    break;
   case 2:
     send_unicode(UC_EGRAVE);
     break;
