@@ -417,7 +417,7 @@ void matrix_scan_user(void) {
 
     // CUSTOM Disable IME
     SEQ_TWO_KEYS(KC_K, KC_J) {
-      SEND_STRING(SS_LCTL(SS_LALT("`")));
+      SEND_STRING(SS_LCTL("`"));
     }
 
     // Katakana
